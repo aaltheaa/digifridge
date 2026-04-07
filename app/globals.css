@@ -1,0 +1,315 @@
+/* ─────────────────────────────────────────────────────────────────────────────
+   digifridge · globals.css
+   Design tokens, reset, and visual styles
+   ───────────────────────────────────────────────────────────────────────────── */
+
+@import url('https://fonts.googleapis.com/css2?family=Special+Elite&family=DM+Mono:wght@300;400;500&family=Syne:wght@400;500;600;700;800&display=swap');
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* ── Design Tokens ─────────────────────────────────────────────────────────── */
+:root {
+  /* Kitchen / background */
+  --bg-kitchen:     #1a1c20;
+
+  /* Stainless steel palette */
+  --steel-light:    #e8ecee;
+  --steel-base:     #c8cdd3;
+  --steel-mid:      #d0d5da;
+  --steel-dark:     #a8adb3;
+
+  /* Chrome accents (handle) */
+  --chrome-light:   #dde0e3;
+  --chrome-mid:     #b0b5bb;
+  --chrome-dark:    #808890;
+
+  /* Magnet tile — word fridge magnet aesthetic */
+  --magnet-bg:       #f7f5ef;
+  --magnet-border:   #c8c4ba;
+  --magnet-text:     #1a1a18;
+  --magnet-shadow:   1px 2px 4px rgba(0,0,0,.22), 0 1px 1px rgba(0,0,0,.10);
+  --magnet-shadow-hover: 1px 4px 10px rgba(0,0,0,.28), 0 1px 2px rgba(0,0,0,.14);
+  --magnet-shadow-drag:  3px 10px 24px rgba(0,0,0,.38), 0 2px 6px rgba(0,0,0,.22);
+
+  /* Slot underline */
+  --slot-border:     #b0a898;
+  --slot-border-focus: #555;
+  --slot-placeholder: #bbb8ae;
+
+  /* Typography */
+  --font-display:   'Syne', sans-serif;
+  --font-magnet:    'Special Elite', serif;
+  --font-mono:      'DM Mono', monospace;
+
+  /* Tray */
+  --tray-bg:        #111316;
+  --tray-border:    #2a2e36;
+  --tray-height:    260px;
+
+  /* Code panel */
+  --panel-bg:       #0a0c10;
+  --panel-width:    360px;
+}
+
+/* ── Base Reset ─────────────────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; }
+
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow: hidden;
+  background: var(--bg-kitchen);
+}
+
+body {
+  font-family: var(--font-display);
+  -webkit-font-smoothing: antialiased;
+}
+
+/* ── Stainless Steel Fridge Surface ─────────────────────────────────────────── */
+.fridge-surface {
+  background:
+    repeating-linear-gradient(
+      90deg,
+      transparent,
+      transparent 2px,
+      rgba(255,255,255,0.012) 2px,
+      rgba(255,255,255,0.012) 4px
+    ),
+    linear-gradient(
+      160deg,
+      var(--steel-light) 0%,
+      var(--steel-base)  20%,
+      var(--steel-mid)   42%,
+      var(--steel-dark)  58%,
+      var(--steel-base)  75%,
+      var(--steel-light) 90%,
+      var(--steel-mid)   100%
+    );
+  position: relative;
+}
+
+.fridge-surface::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  box-shadow: inset 0 0 40px rgba(0,0,0,.10), inset 0 2px 4px rgba(255,255,255,.25);
+  pointer-events: none;
+  z-index: 1;
+}
+
+/* ── Chrome Handle ──────────────────────────────────────────────────────────── */
+.fridge-handle {
+  background: linear-gradient(
+    180deg,
+    var(--chrome-light) 0%,
+    var(--chrome-mid)   40%,
+    var(--chrome-dark)  60%,
+    var(--chrome-mid)   80%,
+    var(--chrome-light) 100%
+  );
+  border-radius: 4px;
+  box-shadow:
+    0 2px 6px rgba(0,0,0,.4),
+    inset 0 1px 0 rgba(255,255,255,.6),
+    inset 0 -1px 0 rgba(0,0,0,.2);
+}
+
+/* ── Word Magnet Tile ───────────────────────────────────────────────────────── */
+.magnet {
+  background: var(--magnet-bg);
+  border: 1px solid var(--magnet-border);
+  border-radius: 2px;
+  padding: 5px 9px 7px;
+  cursor: grab;
+  user-select: none;
+  box-shadow: var(--magnet-shadow);
+  font-family: var(--font-magnet);
+  font-size: 14px;
+  color: var(--magnet-text);
+  /* Cap width so long values wrap vertically rather than extending forever */
+  max-width: 210px;
+  /* Let short content stay compact */
+  width: max-content;
+  transition: box-shadow 0.12s ease;
+}
+
+.magnet:hover {
+  box-shadow: var(--magnet-shadow-hover);
+}
+
+.magnet.dragging {
+  box-shadow: var(--magnet-shadow-drag);
+  cursor: grabbing;
+  transform-origin: center center;
+}
+
+/* ── Magnet Label Row ───────────────────────────────────────────────────────── */
+.magnet-label-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  white-space: nowrap;
+}
+
+.magnet-label {
+  font-family: var(--font-magnet);
+  font-size: 14px;
+  color: var(--magnet-text);
+  line-height: 1.2;
+}
+
+.magnet-delete {
+  margin-left: auto;
+  font-size: 13px;
+  line-height: 1;
+  cursor: pointer;
+  opacity: 0;
+  color: #999;
+  background: none;
+  border: none;
+  padding: 0 2px;
+  transition: opacity 0.12s;
+}
+
+.magnet:hover .magnet-delete {
+  opacity: 0.7;
+}
+
+.magnet-delete:hover {
+  opacity: 1 !important;
+  color: #c0392b;
+}
+
+/* ── Magnet Slot Row ────────────────────────────────────────────────────────── */
+.magnet-slots {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 3px;
+  margin-top: 4px;
+}
+
+.slot-sep {
+  font-family: var(--font-magnet);
+  font-size: 12px;
+  color: #666;
+  flex-shrink: 0;
+  line-height: 1.4;
+}
+
+/*
+  contenteditable slot — grows horizontally up to the magnet max-width,
+  then wraps vertically. No clipping.
+  :empty::before renders the placeholder text.
+*/
+.slot-editable {
+  display: inline;
+  font-family: var(--font-magnet);
+  font-size: 12px;
+  color: var(--magnet-text);
+  outline: none;
+  border-bottom: 1.5px solid var(--slot-border);
+  padding: 0 2px 1px;
+  min-width: 20px;
+  word-break: break-word;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  cursor: text;
+}
+
+.slot-editable:focus {
+  border-bottom-color: var(--slot-border-focus);
+}
+
+.slot-editable:empty::before {
+  content: attr(data-placeholder);
+  color: var(--slot-placeholder);
+  pointer-events: none;
+}
+
+/* ── Tray Tile (source magnet in tray) ──────────────────────────────────────── */
+.tray-tile {
+  background: var(--magnet-bg);
+  border: 1px solid var(--magnet-border);
+  border-radius: 2px;
+  padding: 4px 9px 5px;
+  cursor: grab;
+  user-select: none;
+  font-family: var(--font-magnet);
+  font-size: 13px;
+  color: var(--magnet-text);
+  box-shadow: 1px 1px 3px rgba(0,0,0,.18);
+  white-space: nowrap;
+  transition: transform 0.1s ease, box-shadow 0.1s ease;
+}
+
+.tray-tile:hover {
+  transform: translateY(-1px);
+  box-shadow: 1px 3px 7px rgba(0,0,0,.22);
+}
+
+/* ── Code Panel ─────────────────────────────────────────────────────────────── */
+.code-panel {
+  background: var(--panel-bg);
+  font-family: var(--font-mono);
+  color: #e2e8f0;
+}
+
+.token-keyword  { color: #f472b6; }
+.token-output   { color: #86efac; }
+.token-comment  { color: #4b5563; font-style: italic; }
+.token-default  { color: #cbd5e1; }
+
+/* ── Tray ───────────────────────────────────────────────────────────────────── */
+.tray {
+  background: var(--tray-bg);
+  border-top: 1px solid var(--tray-border);
+}
+
+/* ── Kitchen Background ─────────────────────────────────────────────────────── */
+.kitchen-bg {
+  background-color: var(--bg-kitchen);
+  background-image:
+    linear-gradient(rgba(255,255,255,0.013) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255,255,255,0.013) 1px, transparent 1px);
+  background-size: 40px 40px;
+}
+
+/* ── Output Magnet (receipt / typewriter label) ─────────────────────────────── */
+.output-magnet {
+  background: #f0f7f0;
+  border: 1px solid #b8d4b8;
+  border-top: 2px dashed #8aab8a;   /* perforation line */
+  border-radius: 1px 1px 2px 2px;
+  padding: 6px 10px 7px;
+  user-select: none;
+  pointer-events: none;             /* not interactive */
+  box-shadow:
+    1px 2px 5px rgba(0,0,0,.18),
+    0 1px 1px rgba(0,0,0,.08),
+    inset 0 1px 0 rgba(255,255,255,.7);
+  max-width: 200px;
+  width: max-content;
+}
+
+.output-magnet-text {
+  font-family: var(--font-mono);    /* DM Mono — typewritten, not handwritten */
+  font-size: 12px;
+  font-weight: 400;
+  color: #1a3020;
+  letter-spacing: 0.04em;
+  line-height: 1.4;
+  display: block;
+  word-break: break-word;
+  white-space: pre-wrap;
+}
+
+/* ── Scrollbar ──────────────────────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { background: #2a2e36; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #3a3e48; }
