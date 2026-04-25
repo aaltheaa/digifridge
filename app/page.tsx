@@ -104,7 +104,7 @@ export default function Home() {
           ref={canvasRef}
           className="relative flex flex-col"
           style={{
-            width: 'min(680px, 90vw)',
+            width: 'min(980px, 96vw)',
             height: 'min(860px, 92vh)',
             // Fridge outer casing
             background: 'linear-gradient(160deg, #b0b5bb 0%, #9aa0a8 50%, #b8bdc5 100%)',
@@ -147,14 +147,12 @@ export default function Home() {
               </span>
             </div>
 
-            {/* ── Canvas + Code Panel ─────────────────────────────────────── */}
-            <div className="relative flex-1 overflow-hidden flex flex-col">
+            {/* ── 3-column main area ──────────────────────────────────────── */}
+            <div className="flex flex-row flex-1 overflow-hidden">
+              <MagnetTray />
               <FridgeCanvas />
               <CodePanel />
             </div>
-
-            {/* ── Tray ────────────────────────────────────────────────────── */}
-            <MagnetTray />
           </div>
         </div>
       </div>

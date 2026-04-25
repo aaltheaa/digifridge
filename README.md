@@ -2,6 +2,8 @@
 
 > A digital fridge where coding blocks are word magnets — drag them onto the steel surface, arrange top-to-bottom, and watch your program come to life.
 
+The interface is a three-panel layout inspired by Scratch: the **magnet drawer** lives permanently on the left, the **fridge canvas** fills the center, and the **code output panel** sits always-visible on the right.
+
 Built with Next.js 14, Zustand, dnd-kit, and Framer Motion.
 
 ---
@@ -39,7 +41,7 @@ When you drag a magnet from the tray and drop it on the fridge, it lands exactly
 
 ### The Tray
 
-The magnet tray lives at the bottom of the fridge behind a slide-up drawer. Click **magnets** to open it. Magnets are organized by category with colored filter tabs:
+The magnet tray is a permanent sidebar on the left side of the fridge. Magnets are organized by category with colored filter tabs at the top:
 
 | Category | Color | Magnets |
 |---|---|---|
@@ -51,7 +53,7 @@ The magnet tray lives at the bottom of the fridge behind a slide-up drawer. Clic
 | operators | purple | `and`, `or`, `not` |
 | other | slate | `ask`, `//` |
 
-Drag any magnet from the tray directly onto the fridge surface.
+Drag any magnet from the tray directly onto the fridge canvas. The tray scrolls vertically when the list is long.
 
 ### Slots
 
@@ -75,7 +77,7 @@ The generated code is JavaScript-like, using `print()` as the output function (m
 
 ### The Code Panel
 
-Click **view code** (top-right corner of the canvas) to open a slide-in panel showing the generated code with syntax highlighting:
+The code panel is a permanent sidebar on the right side of the fridge, always showing the generated code as you work — no toggle needed. Syntax highlighting:
 
 - Keywords (`for`, `while`, `if`, `let`, etc.) in pink
 - `print()` calls in green
@@ -172,7 +174,7 @@ digifridge/
 │   ├── output/
 │   │   └── CodePanel.tsx     # Code display, run button, output section
 │   └── tray/
-│       └── MagnetTray.tsx    # Slide-up drawer with category filter tabs
+│       └── MagnetTray.tsx    # Permanent left sidebar with category filter tabs
 ├── lib/
 │   ├── code-generator.ts     # generateCode() + executeCode()
 │   └── magnet-catalog.ts     # All magnet definitions, category helpers
@@ -222,7 +224,7 @@ FridgeStore
 ├── magnets: PlacedMagnet[]        — code magnets on the canvas
 ├── outputMagnets: OutputMagnet[]  — receipt stickers from last run (cleared on any mutation)
 ├── generatedCode: GeneratedCode   — auto-updated on every canvas change
-└── ui: UIState                    — tray open, code panel open, active category
+└── ui: UIState                    — active category filter, selected magnet
 ```
 
 `runCodeGeneration()` is called automatically by every magnet mutation (place, move, remove, edit slot). `setOutputMagnets()` is called explicitly from the run button in CodePanel.
@@ -239,8 +241,8 @@ All visual constants live in `app/globals.css` as CSS custom properties:
 | `--font-magnet` | Special Elite | Handwritten serif — magnet labels |
 | `--font-mono` | DM Mono | Code panel, output magnets, tray tabs |
 | `--font-display` | Syne | UI labels, brand text |
-| `--tray-height` | 260px | Open height of the magnet tray |
-| `--panel-width` | 360px | Width of the code panel |
+| `--tray-width` | 210px | Width of the left magnet tray sidebar |
+| `--panel-width` | 290px | Width of the right code panel sidebar |
 | `--bg-kitchen` | `#1a1c20` | Dark background behind the fridge |
 
 ---

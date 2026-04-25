@@ -46,11 +46,11 @@
   /* Tray */
   --tray-bg:        #111316;
   --tray-border:    #2a2e36;
-  --tray-height:    260px;
+  --tray-width:     210px;
 
   /* Code panel */
   --panel-bg:       #0a0c10;
-  --panel-width:    360px;
+  --panel-width:    290px;
 }
 
 /* ── Base Reset ─────────────────────────────────────────────────────────────── */
@@ -267,7 +267,6 @@ body {
 /* ── Tray ───────────────────────────────────────────────────────────────────── */
 .tray {
   background: var(--tray-bg);
-  border-top: 1px solid var(--tray-border);
 }
 
 /* ── Kitchen Background ─────────────────────────────────────────────────────── */
