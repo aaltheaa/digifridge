@@ -88,11 +88,16 @@ If there are unclosed blocks, a red warning appears below the code and the **run
 
 ### Running Code
 
-When the code is valid, click **▶ run** in the code panel header. The code executes in a sandboxed `new Function()` context with a custom `print()` function that captures output. The run button is disabled if there are validation errors.
+When the code is valid, press **▶ run** — either the green pill button in the **bottom-right corner of the fridge canvas**, or the button in the code panel header. Both trigger the same execution. The run button is dimmed and disabled if there are validation errors.
+
+The code executes in a sandboxed `new Function()` context. Two things produce visible output:
+
+- **`print(value)`** — explicit output, always captured
+- **`return value`** at the top level — if the program ends with a `return` and no `print()` was called, the return value is shown as output (e.g. `return x + 1` with `x = 0` produces `1`)
 
 ### Output Magnets
 
-After a successful run, each line of `print()` output appears on the fridge as a **receipt-style sticker** — a mint-green label with a dashed perforation line at the top and monospace text, visually distinct from the handwritten-style code magnets.
+After a successful run, each line of output appears on the fridge as a **receipt-style sticker** — a mint-green label with a dashed perforation line at the top and monospace text, visually distinct from the handwritten-style code magnets.
 
 Output magnets disappear instantly the moment you touch anything — move a magnet, edit a slot, add or remove a block. They reappear only after the next successful run. This gives you immediate feedback that your program state has changed and needs to be re-run.
 
@@ -224,10 +229,11 @@ FridgeStore
 ├── magnets: PlacedMagnet[]        — code magnets on the canvas
 ├── outputMagnets: OutputMagnet[]  — receipt stickers from last run (cleared on any mutation)
 ├── generatedCode: GeneratedCode   — auto-updated on every canvas change
+├── runError: string | null        — last execution error, cleared on next run
 └── ui: UIState                    — active category filter, selected magnet
 ```
 
-`runCodeGeneration()` is called automatically by every magnet mutation (place, move, remove, edit slot). `setOutputMagnets()` is called explicitly from the run button in CodePanel.
+`runCodeGeneration()` is called automatically by every magnet mutation (place, move, remove, edit slot). `runCode()` is the shared run action used by both the canvas button and the code panel button — it executes the code, captures output (including top-level `return` values), and updates `outputMagnets` and `runError`.
 
 ---
 

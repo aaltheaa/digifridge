@@ -1,34 +1,9 @@
 'use client'
 
-import { useState } from 'react'
 import { useFridgeStore } from '@/store/fridge'
-import { executeCode } from '@/lib/code-generator'
-import { OutputMagnet } from '@/types'
-
-function buildOutputMagnets(lines: string[]): OutputMagnet[] {
-  return lines.map((text, i) => ({
-    id: `out_${i}`,
-    text,
-    x: 300 + Math.round((Math.random() * 24) - 12),
-    y: 20 + i * 42 + Math.round((Math.random() * 6) - 3),
-    rotation: parseFloat(((Math.random() * 6) - 3).toFixed(1)),
-  }))
-}
 
 export function CodePanel() {
-  const { generatedCode, clearAll, outputMagnets, setOutputMagnets } = useFridgeStore()
-  const [runError, setRunError] = useState<string | null>(null)
-
-  function handleRun() {
-    if (!generatedCode) return
-    const result = executeCode(generatedCode.raw)
-    setRunError(result.error ?? null)
-    if (!result.error && result.output.length > 0) {
-      setOutputMagnets(buildOutputMagnets(result.output))
-    } else {
-      setOutputMagnets([])
-    }
-  }
+  const { generatedCode, clearAll, outputMagnets, runCode, runError } = useFridgeStore()
 
   const runOutput = outputMagnets.length > 0 ? outputMagnets.map(m => m.text) : null
   const hasCode = !!generatedCode && generatedCode.lines.length > 0
@@ -61,7 +36,7 @@ export function CodePanel() {
             clear
           </button>
           <button
-            onClick={handleRun}
+            onClick={runCode}
             disabled={!hasCode || hasErrors}
             className="text-xs px-3 py-1 rounded font-medium transition-all"
             style={{

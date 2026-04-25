@@ -12,7 +12,9 @@ import { PlacedMagnetBlock } from '@/components/magnets/Magnet'
 import { OutputMagnetBlock } from '@/components/magnets/OutputMagnet'
 
 export function FridgeCanvas() {
-  const { magnets, outputMagnets, setSelectedMagnet } = useFridgeStore()
+  const { magnets, outputMagnets, setSelectedMagnet, generatedCode, runCode } = useFridgeStore()
+  const hasCode = !!generatedCode && generatedCode.lines.length > 0
+  const hasErrors = generatedCode?.hasErrors ?? false
 
   const { setNodeRef, isOver } = useDroppable({
     id: 'fridge-canvas',
@@ -75,6 +77,26 @@ export function FridgeCanvas() {
       {outputMagnets.map((om) => (
         <OutputMagnetBlock key={om.id} magnet={om} />
       ))}
+
+      {/* Run button — bottom-right of canvas */}
+      <button
+        onClick={(e) => { e.stopPropagation(); runCode() }}
+        disabled={!hasCode || hasErrors}
+        className="absolute bottom-4 right-4 z-10 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium transition-all"
+        style={{
+          fontFamily: 'var(--font-mono)',
+          background: hasCode && !hasErrors ? '#22c55e' : 'rgba(34,197,94,0.15)',
+          color: hasCode && !hasErrors ? '#071207' : 'rgba(34,197,94,0.4)',
+          border: '1px solid rgba(34,197,94,0.3)',
+          cursor: hasCode && !hasErrors ? 'pointer' : 'default',
+          fontSize: 10,
+          letterSpacing: '0.06em',
+          pointerEvents: 'all',
+        }}
+        title="Run program"
+      >
+        ▶ run
+      </button>
 
       {/* Sort order guide — subtle vertical line on left side */}
       <div

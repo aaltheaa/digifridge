@@ -84,7 +84,11 @@ export function executeCode(raw: string): { output: string[]; error?: string } {
   try {
     // eslint-disable-next-line no-new-func
     const fn = new Function('print', raw)
-    fn(printFn)
+    const returnVal = fn(printFn)
+    // If the program used `return` and produced no print() output, show the return value
+    if (returnVal !== undefined && output.length === 0) {
+      output.push(String(returnVal))
+    }
     return { output }
   } catch (err) {
     return {

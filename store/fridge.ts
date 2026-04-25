@@ -5,7 +5,17 @@
 
 import { create } from 'zustand'
 import { PlacedMagnet, OutputMagnet, UIState, GeneratedCode, MagnetCategory } from '@/types'
-import { generateCode } from '@/lib/code-generator'
+import { generateCode, executeCode } from '@/lib/code-generator'
+
+function buildOutputMagnets(lines: string[]): OutputMagnet[] {
+  return lines.map((text, i) => ({
+    id: `out_${i}`,
+    text,
+    x: 300 + Math.round((Math.random() * 24) - 12),
+    y: 20 + i * 42 + Math.round((Math.random() * 6) - 3),
+    rotation: parseFloat(((Math.random() * 6) - 3).toFixed(1)),
+  }))
+}
 
 interface FridgeStore {
   // ── Magnet State ───────────────────────────────────────────────────────────
@@ -30,6 +40,10 @@ interface FridgeStore {
   // ── Output Magnets ─────────────────────────────────────────────────────────
   outputMagnets: OutputMagnet[]
   setOutputMagnets: (magnets: OutputMagnet[]) => void
+
+  // ── Run ────────────────────────────────────────────────────────────────────
+  runError: string | null
+  runCode: () => void
 }
 
 let nextZIndex = 1
@@ -117,6 +131,21 @@ export const useFridgeStore = create<FridgeStore>((set, get) => ({
   outputMagnets: [],
 
   setOutputMagnets: (magnets) => set({ outputMagnets: magnets }),
+
+  // ── Run ────────────────────────────────────────────────────────────────────
+  runError: null,
+
+  runCode: () => {
+    const { generatedCode } = get()
+    if (!generatedCode || generatedCode.hasErrors) return
+    const result = executeCode(generatedCode.raw)
+    set({ runError: result.error ?? null })
+    if (!result.error && result.output.length > 0) {
+      set({ outputMagnets: buildOutputMagnets(result.output) })
+    } else {
+      set({ outputMagnets: [] })
+    }
+  },
 
   // ── Code Generation ────────────────────────────────────────────────────────
   generatedCode: null,
